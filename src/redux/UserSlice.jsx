@@ -2,14 +2,14 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 
 export const getData = createAsyncThunk("users", async () => {
-  const response = await axios.get("https://jsonplaceholder.typicode.com/users");
+  const response = await axios.get("https://.typicode.com/users");
   return response.data;
 });
 
 const userSlice = createSlice({
   name: "users",
   initialState: {
-    data: [
+    stags: [
       {
         name: "test",
         email: "test@gmail.com",
@@ -26,14 +26,17 @@ const userSlice = createSlice({
         id: 3,
       },
     ],
-    isSuccess: false,
     isError: false,
-    message: "",
     isLoading: false,
+    isSuccess: false
   },
   reducers: {
     addUser: (state, action) => {
       state.data.push(action.payload);
+    },
+    showUser: (state, action) => { 
+      const { id } = action.payload;
+      const existUser = state.stags.filter((user) => { return user.id == id })
     },
     updateUser: (state, action) => {
       const { id, name, email } = action.payload;
@@ -52,7 +55,7 @@ const userSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    builder.addCase(getData.pending, (state, payload) => {
+    builder.addCase(getData.pending, (state, action) => {
         state.isLoading = true;
     });
     builder.addCase(getData.rejected, (state, action) => {
@@ -61,10 +64,10 @@ const userSlice = createSlice({
     })
     builder.addCase(getData.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.data = action.payload;
+        state.stags = action.payload;
     });
   },
 });
 
-export const { addUser, updateUser, deleteUser } = userSlice.actions;
+export const { addUser, updateUser, deleteUser, showUser } = userSlice.actions;
 export default userSlice.reducer;
